@@ -12,3 +12,11 @@ FastAPI
 aiogram
 requests
 pymongo
+
+Для работы с ботом:
+$url = "https://api.telegram.org/bot6996529835:AAH8BmVuXvOrFhKcTvXucM5igRdEpzZWmEo/setWebhook"
+$body = @{
+    url = "https://8233-5-129-72-131.ngrok-free.app/webhook/6996529835:AAH8BmVuXvOrFhKcTvXucM5igRdEpzZWmEo"
+}
+
+Invoke-RestMethod -Uri $url -Method Post -ContentType "application/x-www-form-urlencoded" -Body $body
