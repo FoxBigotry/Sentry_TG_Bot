@@ -3,10 +3,10 @@ This project provides an integration between Sentry and Telegram for notifying a
 
 ## Table of Contents
 - [Technologies](#Technologies)
-- [Installation and Setup](#Installation and Setup)
-- [Running the Project](#Installation Steps)
-- [Setting Up Telegram Bot Webhook](#Setting Up Telegram Bot Webhook)
-- [Project Structure](#Project Structure)
+- [Installation and Setup](#Installation-and-Setup)
+- [Running the Project](#Installation-Steps)
+- [Setting Up Telegram Bot Webhook](#Setting-Up-Telegram-Bot-Webhook)
+- [Project Structure](#Project-Structure)
 - [To do](#to-do)
 
 
