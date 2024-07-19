@@ -3,10 +3,10 @@ This project provides an integration between Sentry and Telegram for notifying a
 
 ## Table of Contents
 - [Technologies](#Technologies)
-- [Installation and Setup](#Installation and Setup)
-- [Running the Project](#Installation Steps)
-- [Setting Up Telegram Bot Webhook](#Setting Up Telegram Bot Webhook)
-- [Project Structure](#Project Structure)
+- [Installation and Setup](#Installation-and-Setup)
+- [Running the Project](#Installation-Steps)
+- [Setting Up Telegram Bot Webhook](#Setting-Up-Telegram-Bot-Webhook)
+- [Project Structure](#Project-Structure)
 - [To do](#to-do)
 
 
@@ -19,10 +19,12 @@ The project uses the following technologies and libraries:
 - Motor (asynchronous MongoDB client)
 - Pydantic
 
+
 ## Installation and Setup
 Prerequisites
 - Python 3.8 or higher
 - MongoDB
+
 
 ## Installation Steps
 1. Clone the repository
@@ -38,11 +40,13 @@ MONGO_URI=your_mongodb_uri
 MONGO_DB_NAME=your_mongodb_database_name
 ```
 
+
 ## Running the Project
 Start the application
 ```sh
 uvicorn main:app --reload
 ```
+
 
 ## Setting Up Telegram Bot Webhook
 To set up the Telegram bot webhook, run the following PowerShell commands:
@@ -54,6 +58,7 @@ $body = @{
 
 Invoke-RestMethod -Uri $url -Method Post -ContentType "application/x-www-form-urlencoded" -Body $body
 ```
+
 
 ## Project Structure
 
@@ -69,6 +74,7 @@ Invoke-RestMethod -Uri $url -Method Post -ContentType "application/x-www-form-ur
   - `utils` - Contains utility functions for processing Sentry payloads and interacting with MongoDB.
   - `webhook` - Webhook handling logic for Sentry and Telegram.
 - `settings.py` - Application settings loaded from the .env file.
+
 
 ## To do
 - Logger
