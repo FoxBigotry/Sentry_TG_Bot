@@ -59,11 +59,17 @@ Invoke-RestMethod -Uri $url -Method Post -ContentType "application/x-www-form-ur
 
 - `main.py` - Main FastAPI application file.
 - `bot/`
-  - `bot.py` - Telegram bot logic, including creating new topics in the group.
+  - `bot.py` - Contains the logic for the Telegram bot, including:
+    - Creating new topics in the group.
+    - Sending messages to a specific chat or topic.
 - `database/` - MongoDB models and operations.
   - `connect.py` - Database connection and functions for working with collections.
   - `models.py` - Error model definition.
+- `webhooks/`
+  - `utils` - Contains utility functions for processing Sentry payloads and interacting with MongoDB.
+  - `webhook` - Webhook handling logic for Sentry and Telegram.
 - `settings.py` - Application settings loaded from the .env file.
 
 ## To do
+- Logger
 - Migrate the database from MongoDB to Tortoise ORM.
