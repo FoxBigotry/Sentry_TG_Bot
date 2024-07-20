@@ -2,7 +2,7 @@ from fastapi import Request
 from aiogram.types import Update
 from bot.bot import dp, bot, send_telegram_message
 from database.connect import MongoDBActions
-from webhooks.utils import SentryPayload, process_error_data
+from webhooks.utils import SentryPayload, process_error_data, update_sentry_issue
 from logs.logger import get_logger
 
 # Logging
@@ -20,9 +20,10 @@ async def sentry_webhook(request: Request):
         full_message, topic_id = await process_error_data(payload, mongo_actions)
 
         send_telegram_message(full_message, topic_id)
+        await update_sentry_issue(issue_id=payload.id, status="resolved")
         return {"status": "received"}
     except Exception as e:
-        logger.error(f"Failed to process Sentry webhook: {e}")
+        logger.error(f"Failed to process Sentry webhook:\n{e}")
         return {"status": "error", "message": str(e)}
 
 

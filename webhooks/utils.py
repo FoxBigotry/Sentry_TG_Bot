@@ -1,3 +1,4 @@
+import requests
 import datetime
 from pydantic import BaseModel
 from typing import Optional, Dict, Any
@@ -5,6 +6,11 @@ from database.models import ErrorModel
 from database.connect import MongoDBActions
 from settings import settings
 from bot.bot import create_topic_f
+from logs.logger import get_logger
+
+logger = get_logger()
+
+SENTRY_API_URL = "https://sentry.io/api/0/organizations/{organization_id_or_slug}/issues/{issue_id}/"
 
 
 class SentryPayload(BaseModel):
@@ -79,3 +85,32 @@ async def process_error_data(payload: SentryPayload, mongo_actions: MongoDBActio
                     f"{url_error}")
 
     return full_message, topic_id
+
+
+async def update_sentry_issue(issue_id: str, status: str = "resolved") -> None:
+    """
+        Updates the status of a Sentry issue.
+
+        This function sends a PUT request to the Sentry API to update the status of a specific issue.
+        The status can be set to "resolved". The function uses an
+        authentication token to authorize the request.
+
+        Parameters:
+            - issue_id (str): The unique identifier of the Sentry issue to be updated.
+            - status (str): The new status to be set for the issue. Default is "resolved".
+    """
+    headers = {
+        "Authorization": f"Bearer {settings.SENTRY_AUTH_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "status": status
+    }
+    url = SENTRY_API_URL.format(organization_id_or_slug=settings.ORGANIZATION_SLUG, issue_id=issue_id)
+
+    try:
+        response = requests.put(url, headers=headers, json=data)
+        response.raise_for_status()
+        logger.debug(f"Successfully updated Sentry issue status:\nissue status to {status} for issue {issue_id}")
+    except requests.RequestException as e:
+        logger.error(f"Failed to update Sentry issue status: {e}")

@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     CHAT_ID: str = Field(..., description="Telegram chat ID")
     MONGO_URI: str = Field(..., description="URI for connecting to MongoDB")
     MONGO_DB_NAME: str = Field(..., description="MongoDB database name")
+    SENTRY_AUTH_TOKEN: str = Field(..., description="Sentry token")
+    ORGANIZATION_SLUG: str = Field(..., description="Sentry organization slug")
 
 
 # Attempt to load settings and error handling
