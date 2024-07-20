@@ -1,5 +1,8 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, ValidationError
+from logs.logger import get_logger
+
+logger = get_logger()
 
 
 class Settings(BaseSettings):
@@ -18,7 +21,7 @@ class Settings(BaseSettings):
 try:
     settings = Settings()
 except ValidationError as e:
-    print(f"Error loading settings:\n{e}")
+    logger.error(f"Error loading settings:\n{e}")
     raise
 
 

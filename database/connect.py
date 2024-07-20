@@ -1,8 +1,10 @@
-import logging
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from typing import Optional, Dict, Any
 from database.models import ErrorModel
 from settings import settings
+from logs.logger import get_logger
+
+logger = get_logger()
 
 
 class MongoDBConnection:
@@ -25,7 +27,7 @@ class MongoDBActions(MongoDBConnection):
         try:
             await self.error_collection.insert_one(error_data.dict())
         except Exception as e:
-            logging.error(f"Error while saving data:\n {e}")
+            logger.error(f"Error while saving data:\n {e}")
 
     async def get_error(self, error_id: str) -> Optional[Dict[str, Any]]:
         """
@@ -35,5 +37,5 @@ class MongoDBActions(MongoDBConnection):
             error = await self.error_collection.find_one({'error_id': error_id})
             return error
         except Exception as e:
-            logging.error(f"Error retrieving data:\n {e}")
+            logger.error(f"Error retrieving data:\n {e}")
             return None

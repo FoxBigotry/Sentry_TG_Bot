@@ -1,11 +1,10 @@
-import logging
 from fastapi import FastAPI
 from settings import settings
 from webhooks.webhook import sentry_webhook, telegram_webhook
+from logs.logger import get_logger
 
 # Logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 # Initializations
 app = FastAPI()

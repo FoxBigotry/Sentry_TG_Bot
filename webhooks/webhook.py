@@ -1,13 +1,12 @@
-import logging
 from fastapi import Request
 from aiogram.types import Update
 from bot.bot import dp, bot, send_telegram_message
 from database.connect import MongoDBActions
 from webhooks.utils import SentryPayload, process_error_data
+from logs.logger import get_logger
 
 # Logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 # Initializations
 mongo_actions = MongoDBActions()

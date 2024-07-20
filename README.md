@@ -77,5 +77,4 @@ Invoke-RestMethod -Uri $url -Method Post -ContentType "application/x-www-form-ur
 
 
 ## To do
-- Logger
 - Migrate the database from MongoDB to Tortoise ORM.
