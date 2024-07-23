@@ -1,13 +1,12 @@
 import requests
-import logging
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from settings import settings
+from logs.logger import get_logger
 
 # Logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 # Telegram Configuration
 bot = Bot(token=settings.TG_KEY)
@@ -29,9 +28,9 @@ def send_telegram_message(text, topic_id=None):
     try:
         response = requests.post(TELEGRAM_URL, data=payload)
         response.raise_for_status()
-        logging.debug(f"Successful message sent to Telegram:\n{response.text}")
+        logger.debug(f"Successful message sent to Telegram:\n{response.text}")
     except requests.RequestException as e:
-        logging.error(f"Failed to send message to Telegram:\n{e}")
+        logger.error(f"Failed to send message to Telegram:\n{e}")
 
 
 async def create_topic_f(chat_id: int, id_e: str, type_e: str) -> int:
@@ -50,7 +49,7 @@ async def create_topic_f(chat_id: int, id_e: str, type_e: str) -> int:
         topic_id = topic.message_thread_id
         return topic_id
     except Exception as e:
-        print(f"Error creating topic:\n{e}")
+        logger.error(f"Error creating topic:\n{e}")
         return None
 
 

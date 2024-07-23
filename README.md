@@ -19,10 +19,12 @@ The project uses the following technologies and libraries:
 - Motor (asynchronous MongoDB client)
 - Pydantic
 
+
 ## Installation and Setup
 Prerequisites
 - Python 3.8 or higher
 - MongoDB
+
 
 ## Installation Steps
 1. Clone the repository
@@ -38,11 +40,13 @@ MONGO_URI=your_mongodb_uri
 MONGO_DB_NAME=your_mongodb_database_name
 ```
 
+
 ## Running the Project
 Start the application
 ```sh
 uvicorn main:app --reload
 ```
+
 
 ## Setting Up Telegram Bot Webhook
 To set up the Telegram bot webhook, run the following PowerShell commands:
@@ -54,6 +58,7 @@ $body = @{
 
 Invoke-RestMethod -Uri $url -Method Post -ContentType "application/x-www-form-urlencoded" -Body $body
 ```
+
 
 ## Project Structure
 
@@ -70,6 +75,6 @@ Invoke-RestMethod -Uri $url -Method Post -ContentType "application/x-www-form-ur
   - `webhook` - Webhook handling logic for Sentry and Telegram.
 - `settings.py` - Application settings loaded from the .env file.
 
+
 ## To do
-- Logger
 - Migrate the database from MongoDB to Tortoise ORM.

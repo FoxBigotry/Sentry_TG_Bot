@@ -4,7 +4,6 @@ __pycache__
 .env
 .env.dev
 .coverage
-logs/
 .vscode/
 
 test.py
