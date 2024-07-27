@@ -1,7 +1,7 @@
 from fastapi import Request
 from aiogram.types import Update
 from bot.bot import dp, bot, send_telegram_message
-from database.connect import MongoDBActions
+from database_sql.connect import TortoiseDBActions
 from webhooks.utils import SentryPayload, process_error_data, update_sentry_issue
 from logs.logger import get_logger
 
@@ -9,7 +9,7 @@ from logs.logger import get_logger
 logger = get_logger()
 
 # Initializations
-mongo_actions = MongoDBActions()
+db_actions = TortoiseDBActions()
 
 
 # Endpoint for handling Sentry webhooks
@@ -17,7 +17,7 @@ async def sentry_webhook(request: Request):
     try:
         payload_data = await request.json()
         payload = SentryPayload(**payload_data)
-        full_message, topic_id = await process_error_data(payload, mongo_actions)
+        full_message, topic_id = await process_error_data(payload, db_actions)
 
         send_telegram_message(full_message, topic_id)
         await update_sentry_issue(issue_id=payload.id, status="resolved")
