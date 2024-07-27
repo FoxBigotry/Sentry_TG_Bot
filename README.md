@@ -7,7 +7,6 @@ This project provides an integration between Sentry and Telegram for notifying a
 - [Running the Project](#Installation-Steps)
 - [Setting Up Telegram Bot Webhook](#Setting-Up-Telegram-Bot-Webhook)
 - [Project Structure](#Project-Structure)
-- [To do](#to-do)
 
 
 ## Technologies
@@ -74,7 +73,3 @@ Invoke-RestMethod -Uri $url -Method Post -ContentType "application/x-www-form-ur
   - `utils` - Contains utility functions for processing Sentry payloads and interacting with MongoDB.
   - `webhook` - Webhook handling logic for Sentry and Telegram.
 - `settings.py` - Application settings loaded from the .env file.
-
-
-## To do
-- Migrate the database from MongoDB to Tortoise ORM.
