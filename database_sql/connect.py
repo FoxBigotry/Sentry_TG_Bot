@@ -93,7 +93,10 @@ class TortoiseDBActions(TortoiseDBConnection):
             logger.error(f"Error while retrieving data SQL:\n {e}")
             return None
 
-    async def save_chat_configuration(self, chat_data: TG_Configuration) -> None:
+    async def save_chat_configuration(self, chat_data: TG_Configuration) -> Optional[int]:
+        """
+        Saves the chat configuration to the database.
+        """
         try:
             chat_configuration = await TG_Configuration.create(tg_chat_id=chat_data.tg_chat_id,
                                                                tg_chat_link=chat_data.tg_chat_link)
@@ -104,6 +107,9 @@ class TortoiseDBActions(TortoiseDBConnection):
             return None
 
     async def get_chat_id(self, chat_link: str) -> Optional[TG_Configuration]:
+        """
+        Retrieves the chat configuration from the database by chat link.
+        """
         try:
             chat_id = await TG_Configuration.filter(tg_chat_link=chat_link).first()
             return chat_id

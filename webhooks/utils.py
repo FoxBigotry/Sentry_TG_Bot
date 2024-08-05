@@ -71,7 +71,6 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
             tg_chat_link=settings.CHAT_LINK
         )
         chat_id = await db_actions.save_chat_configuration(chat_data)
-        # chat_id = chat_id_add
 
     error = await db_actions.get_error(id_error, chat_id)
 
