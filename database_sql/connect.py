@@ -1,6 +1,6 @@
 from tortoise import Tortoise
 from typing import Optional
-from database_sql.models import SQLErrorModel
+from database_sql.models import SQLErrorModel, TG_Configuration
 from settings import settings
 from logs.logger import get_logger
 
@@ -76,18 +76,37 @@ class TortoiseDBActions(TortoiseDBConnection):
                                                url_error=error_data.url_error,
                                                event_id=error_data.event_id,
                                                datetime=error_data.datetime,
-                                               topic_id=error_data.topic_id)
+                                               topic_id=error_data.topic_id,
+                                               chat_id=error_data.chat_id)
             logger.info(f"Added:\n{error}")
         except Exception as e:
             logger.error(f"Error while saving data:\n {e}")
 
-    async def get_error(self, error_id: int) -> Optional[SQLErrorModel]:
+    async def get_error(self, error_id: int, chat_id: int) -> Optional[SQLErrorModel]:
         """
         Retrieves an error from the collection by its identifier.
         """
         try:
-            error_data = await SQLErrorModel.filter(error_id=error_id).first()
+            error_data = await SQLErrorModel.filter(error_id=error_id, chat_id=chat_id).first()
             return error_data
         except Exception as e:
             logger.error(f"Error while retrieving data SQL:\n {e}")
+            return None
+
+    async def save_chat_configuration(self, chat_data: TG_Configuration) -> None:
+        try:
+            chat_configuration = await TG_Configuration.create(tg_chat_id=chat_data.tg_chat_id,
+                                                               tg_chat_link=chat_data.tg_chat_link)
+            logger.info(f"Added:\n{chat_configuration}")
+            return chat_configuration.chat_id
+        except Exception as e:
+            logger.error(f"Error while saving chat_data SQL:\n {e}")
+            return None
+
+    async def get_chat_id(self, chat_link: str) -> Optional[TG_Configuration]:
+        try:
+            chat_id = await TG_Configuration.filter(tg_chat_link=chat_link).first()
+            return chat_id
+        except Exception as e:
+            logger.error(f"Error while retrieving chat data SQL:\n {e}")
             return None
