@@ -19,7 +19,7 @@ def send_telegram_message(text, topic_id=None):
     Function to send a message to Telegram
     """
     payload = {
-        'chat_id': settings.CHAT_ID,
+        'chat_id': settings.CHAT_LINK,
         'text': text
     }
     if topic_id:
