@@ -36,7 +36,7 @@ class SentryPayload(BaseModel):
         return self.event.get('event_id', 'not received')
 
 
-async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActions) -> tuple[str, Optional[str]]:
+async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActions) -> tuple[str, str, Optional[str]]:
     """
         Processes the error data received from a Sentry webhook.
 
@@ -61,23 +61,28 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
     value_error = payload.value_error
     event_id_error = payload.event_id_error
 
-    chat_id_db = await db_actions.get_chat_id(settings.CHAT_LINK)
+    # chat_id_db = await db_actions.get_chat_id(settings.CHAT_LINK)
+    chat_id_db = await db_actions.get_chat_id_project(project_name_error)
 
     if chat_id_db:
         chat_id = chat_id_db.chat_id
+        chat_link = chat_id_db.tg_chat_link
     else:
         chat_data = TG_Configuration(
-            tg_chat_id=settings.CHAT_ID,
-            tg_chat_link=settings.CHAT_LINK
+            tg_chat_link=settings.CHAT_LINK,
+            project_name=project_name_error
         )
-        chat_id = await db_actions.save_chat_configuration(chat_data)
+        # chat_id = await db_actions.save_chat_configuration(chat_data)
+        chat_new = await db_actions.save_chat_configuration_2(chat_data)
+        chat_id = chat_new.chat_id
+        chat_link = chat_new.tg_chat_link
 
     error = await db_actions.get_error(id_error, chat_id)
 
     if error:
         topic_id = error.topic_id
     else:
-        topic_id = await create_topic_f(settings.CHAT_ID, str(id_error), type_error)
+        topic_id = await create_topic_f(chat_link, str(id_error), type_error)
 
     error_data_sql = SQLErrorModel(
         error_id=id_error,
@@ -99,7 +104,7 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
                     f"{url_error}")
 
     await db_actions.close_connections()
-    return full_message, topic_id
+    return chat_link, full_message, topic_id
 
 
 async def update_sentry_issue(issue_id: str, status: str = "resolved") -> None:

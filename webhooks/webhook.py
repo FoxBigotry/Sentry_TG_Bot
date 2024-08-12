@@ -17,9 +17,9 @@ async def sentry_webhook(request: Request):
     try:
         payload_data = await request.json()
         payload = SentryPayload(**payload_data)
-        full_message, topic_id = await process_error_data(payload, db_actions)
+        chat_link, full_message, topic_id = await process_error_data(payload, db_actions)
 
-        send_telegram_message(full_message, topic_id)
+        send_telegram_message(chat_link, full_message, topic_id)
         await update_sentry_issue(issue_id=payload.id, status="resolved")
         return {"status": "received"}
     except Exception as e:
