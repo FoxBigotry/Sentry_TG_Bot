@@ -16,5 +16,5 @@ class SQLErrorModel(models.Model):
 
 class TG_Configuration(models.Model):
     chat_id = fields.IntField(pk=True)
-    tg_chat_id = fields.BigIntField()
     tg_chat_link = fields.CharField(max_length=255)
+    project_name = fields.CharField(max_length=255)
