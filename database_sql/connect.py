@@ -93,31 +93,7 @@ class TortoiseDBActions(TortoiseDBConnection):
             logger.error(f"Error while retrieving data SQL:\n {e}")
             return None
 
-    async def save_chat_configuration(self, chat_data: TG_Configuration) -> Optional[int]:
-        """
-        Saves the chat configuration to the database.
-        """
-        try:
-            chat_configuration = await TG_Configuration.create(tg_chat_id=chat_data.tg_chat_id,
-                                                               tg_chat_link=chat_data.tg_chat_link)
-            logger.info(f"Added:\n{chat_configuration}")
-            return chat_configuration.chat_id
-        except Exception as e:
-            logger.error(f"Error while saving chat_data SQL:\n {e}")
-            return None
-
-    async def get_chat_id(self, chat_link: str) -> Optional[TG_Configuration]:
-        """
-        Retrieves the chat configuration from the database by chat link.
-        """
-        try:
-            chat_id = await TG_Configuration.filter(tg_chat_link=chat_link).first()
-            return chat_id
-        except Exception as e:
-            logger.error(f"Error while retrieving chat data SQL:\n {e}")
-            return None
-
-    async def save_chat_configuration_2(self, chat_data: TG_Configuration) -> Optional[TG_Configuration]:
+    async def save_chat_configuration(self, chat_data: TG_Configuration) -> Optional[TG_Configuration]:
         """
         Saves the chat configuration to the database.
         """
@@ -135,9 +111,9 @@ class TortoiseDBActions(TortoiseDBConnection):
         Retrieves the chat configuration from the database by chat link.
         """
         try:
-            chat_id = await TG_Configuration.filter(tg_chat_link=chat_data.tg_chat_link,
-                                                    project_name=chat_data.project_name).first()
-            return chat_id
+            return await TG_Configuration.filter(tg_chat_link=chat_data.tg_chat_link,
+                                                 project_name=chat_data.project_name).first()
+            # return chat_id
         except Exception as e:
             logger.error(f"Error while retrieving chat data SQL:\n {e}")
             return None

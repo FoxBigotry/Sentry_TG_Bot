@@ -5,7 +5,7 @@ from typing import Optional, Dict, Any
 from settings import settings
 from bot.bot import create_topic_f
 from logs.logger import get_logger
-from database_sql.models import SQLErrorModel, TG_Configuration
+from database_sql.models import SQLErrorModel
 from database_sql.connect import TortoiseDBActions
 
 logger = get_logger()
@@ -61,21 +61,15 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
     value_error = payload.value_error
     event_id_error = payload.event_id_error
 
-    # chat_id_db = await db_actions.get_chat_id(settings.CHAT_LINK)
     chat_id_db = await db_actions.get_chat_id_project(project_name_error)
 
     if chat_id_db:
         chat_id = chat_id_db.chat_id
         chat_link = chat_id_db.tg_chat_link
     else:
-        chat_data = TG_Configuration(
-            tg_chat_link=settings.CHAT_LINK,
-            project_name=project_name_error
-        )
-        # chat_id = await db_actions.save_chat_configuration(chat_data)
-        chat_new = await db_actions.save_chat_configuration_2(chat_data)
-        chat_id = chat_new.chat_id
-        chat_link = chat_new.tg_chat_link
+        chat_id = 0
+        chat_link = settings.CHAT_LINK
+        logger.error(f"the group for the project {project_name_error} is not configured")
 
     error = await db_actions.get_error(id_error, chat_id)
 
