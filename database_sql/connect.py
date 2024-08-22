@@ -1,6 +1,6 @@
 from tortoise import Tortoise
 from typing import Optional
-from database_sql.models import SQLErrorModel_T
+from database_sql.models import SQLErrorModel
 from settings import settings
 from logs.logger import get_logger
 
@@ -64,7 +64,7 @@ class TortoiseDBConnection:
 
 
 class TortoiseDBActions(TortoiseDBConnection):
-    async def save_error_data(self, error_data: SQLErrorModel_T) -> None:
+    async def save_error_data(self, error_data: SQLErrorModel) -> None:
         """
         Adds an error to the collection.
         """
@@ -72,20 +72,20 @@ class TortoiseDBActions(TortoiseDBConnection):
             await self.connection()
             data = error_data.__dict__.copy()
             data.pop('id', None)
-            error = await SQLErrorModel_T.create(**data)
+            error = await SQLErrorModel.create(**data)
             logger.info(f"Added:\n{error}")
         except Exception as e:
             logger.error(f"Error while saving data:\n {e}")
         finally:
             await self.close_connections()
 
-    async def get_error(self, error_id: int) -> Optional[SQLErrorModel_T]:
+    async def get_error(self, error_id: int) -> Optional[SQLErrorModel]:
         """
         Retrieves an error from the collection by its identifier.
         """
         try:
             await self.connection()
-            error_data = await SQLErrorModel_T.filter(error_id=error_id).first()
+            error_data = await SQLErrorModel.filter(error_id=error_id).first()
             return error_data
         except Exception as e:
             logger.error(f"Error while retrieving data SQL:\n {e}")
