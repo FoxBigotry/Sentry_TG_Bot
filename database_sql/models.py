@@ -1,7 +1,7 @@
 from tortoise import fields, models
 
 
-class SQLErrorModel(models.Model):
+class SQLErrorModel_T(models.Model):
     id = fields.IntField(pk=True)
     error_id = fields.BigIntField()
     project_name = fields.CharField(max_length=255)

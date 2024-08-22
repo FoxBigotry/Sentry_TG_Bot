@@ -1,6 +1,6 @@
 from tortoise import Tortoise
 from typing import Optional
-from database_sql.models import SQLErrorModel
+from database_sql.models import SQLErrorModel_T
 from settings import settings
 from logs.logger import get_logger
 
@@ -64,29 +64,32 @@ class TortoiseDBConnection:
 
 
 class TortoiseDBActions(TortoiseDBConnection):
-    async def save_error_data(self, error_data: SQLErrorModel) -> None:
+    async def save_error_data(self, error_data: SQLErrorModel_T) -> None:
         """
         Adds an error to the collection.
         """
         try:
-            error = await SQLErrorModel.create(error_id=error_data.error_id,
-                                               project_name=error_data.project_name,
-                                               type_error=error_data.type_error,
-                                               value_error=error_data.value_error,
-                                               url_error=error_data.url_error,
-                                               event_id=error_data.event_id,
-                                               datetime=error_data.datetime,
-                                               topic_id=error_data.topic_id)
+            # error = await SQLErrorModel.create(error_id=error_data.error_id,
+            #                                    project_name=error_data.project_name,
+            #                                    type_error=error_data.type_error,
+            #                                    value_error=error_data.value_error,
+            #                                    url_error=error_data.url_error,
+            #                                    event_id=error_data.event_id,
+            #                                    datetime=error_data.datetime,
+            #                                    topic_id=error_data.topic_id)
+            data = error_data.__dict__.copy()
+            data.pop('id', None)
+            error = await SQLErrorModel_T.create(**data)
             logger.info(f"Added:\n{error}")
         except Exception as e:
             logger.error(f"Error while saving data:\n {e}")
 
-    async def get_error(self, error_id: int) -> Optional[SQLErrorModel]:
+    async def get_error(self, error_id: int) -> Optional[SQLErrorModel_T]:
         """
         Retrieves an error from the collection by its identifier.
         """
         try:
-            error_data = await SQLErrorModel.filter(error_id=error_id).first()
+            error_data = await SQLErrorModel_T.filter(error_id=error_id).first()
             return error_data
         except Exception as e:
             logger.error(f"Error while retrieving data SQL:\n {e}")

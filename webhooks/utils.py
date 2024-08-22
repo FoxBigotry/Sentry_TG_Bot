@@ -5,7 +5,7 @@ from typing import Optional, Dict, Any
 from settings import settings
 from bot.bot import create_topic_f
 from logs.logger import get_logger
-from database_sql.models import SQLErrorModel
+from database_sql.models import SQLErrorModel_T
 from database_sql.connect import TortoiseDBActions
 
 logger = get_logger()
@@ -68,7 +68,7 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
     else:
         topic_id = await create_topic_f(settings.CHAT_ID, str(id_error), type_error)
 
-    error_data_sql = SQLErrorModel(
+    error_data_sql = SQLErrorModel_T(
         error_id=id_error,
         project_name=project_name_error,
         type_error=type_error,
