@@ -53,7 +53,6 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
             tuple[str, Optional[str]]: A tuple containing the formatted error message and the ID of the
                                        created or existing Telegram topic.
     """
-    await db_actions.connection()
     id_error = int(payload.id)
     url_error = payload.url
     project_name_error = payload.project_name
@@ -86,7 +85,6 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
                     f"Error: {type_error}: {value_error}\n"
                     f"{url_error}")
 
-    await db_actions.close_connections()
     return full_message, topic_id
 
 
