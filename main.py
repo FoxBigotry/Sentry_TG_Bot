@@ -1,10 +1,10 @@
 import os
 import sys
+import uvicorn
 from pyngrok import ngrok
 from dotenv import load_dotenv
 from fastapi import FastAPI
-from settings import settings
-from webhooks.webhook import sentry_webhook, telegram_webhook
+from webhooks.webhook import router as webhooks_router
 from logs.logger import get_logger
 
 load_dotenv()
@@ -16,8 +16,7 @@ logger = get_logger()
 app = FastAPI()
 
 # Routes for webhooks
-app.post("/sentry-webhook")(sentry_webhook)
-app.post(f"/webhook/{settings.TG_KEY}")(telegram_webhook)
+app.include_router(webhooks_router)
 
 
 def start_ngrok():
@@ -42,5 +41,4 @@ def start_ngrok():
 # Application startup
 if __name__ == "__main__":
     start_ngrok()
-    import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
