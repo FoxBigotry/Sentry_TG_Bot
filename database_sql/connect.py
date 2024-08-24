@@ -69,35 +69,36 @@ class TortoiseDBActions(TortoiseDBConnection):
         Adds an error to the collection.
         """
         try:
-            error = await SQLErrorModel.create(error_id=error_data.error_id,
-                                               project_name=error_data.project_name,
-                                               type_error=error_data.type_error,
-                                               value_error=error_data.value_error,
-                                               url_error=error_data.url_error,
-                                               event_id=error_data.event_id,
-                                               datetime=error_data.datetime,
-                                               topic_id=error_data.topic_id,
-                                               chat_id=error_data.chat_id)
+            await self.connection()
+            data = error_data.__dict__.copy()
+            data.pop('id', None)
+            error = await SQLErrorModel.create(**data)
             logger.info(f"Added:\n{error}")
         except Exception as e:
             logger.error(f"Error while saving data:\n {e}")
+        finally:
+            await self.close_connections()
 
     async def get_error(self, error_id: int, chat_id: int) -> Optional[SQLErrorModel]:
         """
         Retrieves an error from the collection by its identifier.
         """
         try:
+            await self.connection()
             error_data = await SQLErrorModel.filter(error_id=error_id, chat_id=chat_id).first()
             return error_data
         except Exception as e:
             logger.error(f"Error while retrieving data SQL:\n {e}")
             return None
+        finally:
+            await self.close_connections()
 
     async def save_chat_configuration(self, chat_data: TG_Configuration) -> Optional[TG_Configuration]:
         """
         Saves the chat configuration to the database.
         """
         try:
+            await self.connection()
             chat_configuration = await TG_Configuration.create(tg_chat_link=chat_data.tg_chat_link,
                                                                project_name=chat_data.project_name)
             logger.info(f"Added:\n{chat_configuration}")
@@ -105,26 +106,34 @@ class TortoiseDBActions(TortoiseDBConnection):
         except Exception as e:
             logger.error(f"Error while saving chat_data SQL:\n {e}")
             return None
+        finally:
+            await self.close_connections()
 
     async def get_chat_conf(self, chat_data: TG_Configuration) -> Optional[TG_Configuration]:
         """
         Retrieves the chat configuration from the database by chat link.
         """
         try:
+            await self.connection()
             return await TG_Configuration.filter(tg_chat_link=chat_data.tg_chat_link,
                                                  project_name=chat_data.project_name).first()
             # return chat_id
         except Exception as e:
             logger.error(f"Error while retrieving chat data SQL:\n {e}")
             return None
+        finally:
+            await self.close_connections()
 
     async def get_chat_id_project(self, project_name: str) -> Optional[TG_Configuration]:
         """
         Retrieves the chat configuration from the database by chat link.
         """
         try:
+            await self.connection()
             chat_id = await TG_Configuration.filter(project_name=project_name).first()
             return chat_id
         except Exception as e:
             logger.error(f"Error while retrieving chat data SQL:\n {e}")
             return None
+        finally:
+            await self.close_connections()

@@ -20,7 +20,6 @@ db_actions = TortoiseDBActions()
 @router.post("/add_link_project/")
 async def add_link_project(data: ProjectData):
     try:
-        await db_actions.connection()
         chat_data = TG_Configuration(
             tg_chat_link=data.tg_chat_link,
             project_name=data.project_name
@@ -31,7 +30,6 @@ async def add_link_project(data: ProjectData):
         else:
             result = f"settings added link_TG: {data.tg_chat_link} and project_name: {data.project_name}"
             await db_actions.save_chat_configuration(chat_data)
-        await db_actions.close_connections()
         return {"message": result}
     except Exception as e:
         logger.error(e)
@@ -40,7 +38,7 @@ async def add_link_project(data: ProjectData):
 
 @router.get("/tg_configurations/")
 async def get_tg_configurations():
-    await db_actions.connection()
+    # await db_actions.connection()
     configurations = await TG_Configuration.all().values("tg_chat_link", "project_name")
-    await db_actions.close_connections()
+    # await db_actions.close_connections()
     return configurations
