@@ -98,6 +98,7 @@ class TortoiseDBActions(TortoiseDBConnection):
         Saves the chat configuration to the database.
         """
         try:
+            await self.connection()
             chat_configuration = await TG_Configuration.create(tg_chat_id=chat_data.tg_chat_id,
                                                                tg_chat_link=chat_data.tg_chat_link)
             logger.info(f"Added:\n{chat_configuration}")
@@ -105,14 +106,19 @@ class TortoiseDBActions(TortoiseDBConnection):
         except Exception as e:
             logger.error(f"Error while saving chat_data SQL:\n {e}")
             return None
+        finally:
+            await self.close_connections()
 
     async def get_chat_id(self, chat_link: str) -> Optional[TG_Configuration]:
         """
         Retrieves the chat configuration from the database by chat link.
         """
         try:
+            await self.connection()
             chat_id = await TG_Configuration.filter(tg_chat_link=chat_link).first()
             return chat_id
         except Exception as e:
             logger.error(f"Error while retrieving chat data SQL:\n {e}")
             return None
+        finally:
+            await self.close_connections()
