@@ -1,4 +1,4 @@
-from fastapi import Request
+from fastapi import Request, APIRouter
 from aiogram.types import Update
 from bot.bot import dp, bot, send_telegram_message
 from database_sql.connect import TortoiseDBActions
@@ -11,8 +11,11 @@ logger = get_logger()
 # Initializations
 db_actions = TortoiseDBActions()
 
+router = APIRouter()
+
 
 # Endpoint for handling Sentry webhooks
+@router.post("/sentry-webhook")
 async def sentry_webhook(request: Request):
     try:
         payload_data = await request.json()
@@ -28,6 +31,7 @@ async def sentry_webhook(request: Request):
 
 
 # Endpoint for handling Telegram webhooks
+@router.post("/webhook/{settings.TG_KEY}")
 async def telegram_webhook(request: Request):
     update = await request.json()
     telegram_update = Update(**update)
