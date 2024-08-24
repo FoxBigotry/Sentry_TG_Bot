@@ -53,13 +53,7 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
             tuple[str, Optional[str]]: A tuple containing the formatted error message and the ID of the
                                        created or existing Telegram topic.
     """
-    await db_actions.connection()
     id_error = int(payload.id)
-    url_error = payload.url
-    project_name_error = payload.project_name
-    type_error = payload.type_error
-    value_error = payload.value_error
-    event_id_error = payload.event_id_error
 
     chat_id_db = await db_actions.get_chat_id(settings.CHAT_LINK)
 
@@ -77,15 +71,15 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
     if error:
         topic_id = error.topic_id
     else:
-        topic_id = await create_topic_f(settings.CHAT_ID, str(id_error), type_error)
+        topic_id = await create_topic_f(settings.CHAT_ID, str(id_error), payload.type_error)
 
     error_data_sql = SQLErrorModel(
         error_id=id_error,
-        project_name=project_name_error,
-        type_error=type_error,
-        value_error=value_error,
-        url_error=url_error,
-        event_id=event_id_error,
+        project_name=payload.project_name,
+        type_error=payload.type_error,
+        value_error=payload.value_error,
+        url_error=payload.url,
+        event_id=payload.event_id_error,
         datetime=datetime.datetime.now(),
         topic_id=topic_id,
         chat_id=chat_id
@@ -94,11 +88,10 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
     await db_actions.save_error_data(error_data_sql)
 
     full_message = (f"Error in Sentry!!\n"
-                    f"Project: {project_name_error}\n"
-                    f"Error: {type_error}: {value_error}\n"
-                    f"{url_error}")
+                    f"Project: {payload.project_name}\n"
+                    f"Error: {payload.type_error}: {payload.value_error}\n"
+                    f"{payload.url}")
 
-    await db_actions.close_connections()
     return full_message, topic_id
 
 
