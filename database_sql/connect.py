@@ -85,8 +85,7 @@ class TortoiseDBActions(TortoiseDBConnection):
         """
         try:
             await self.connection()
-            error_data = await SQLErrorModel.filter(error_id=error_id, chat_id=chat_id).first()
-            return error_data
+            return await SQLErrorModel.filter(error_id=error_id, chat_id=chat_id).first()
         except Exception as e:
             logger.error(f"Error while retrieving data SQL:\n {e}")
             return None
@@ -130,8 +129,7 @@ class TortoiseDBActions(TortoiseDBConnection):
         """
         try:
             await self.connection()
-            chat_id = await TG_Configuration.filter(project_name=project_name).first()
-            return chat_id
+            return await TG_Configuration.filter(project_name=project_name).first()
         except Exception as e:
             logger.error(f"Error while retrieving chat data SQL:\n {e}")
             return None

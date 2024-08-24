@@ -54,11 +54,6 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
                                        created or existing Telegram topic.
     """
     id_error = int(payload.id)
-    # url_error = payload.url
-    # project_name_error = payload.project_name
-    # type_error = payload.type_error
-    # value_error = payload.value_error
-    # event_id_error = payload.event_id_error
 
     chat_id_db = await db_actions.get_chat_id_project(payload.project_name)
 

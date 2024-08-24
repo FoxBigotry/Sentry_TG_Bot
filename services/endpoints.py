@@ -38,7 +38,5 @@ async def add_link_project(data: ProjectData):
 
 @router.get("/tg_configurations/")
 async def get_tg_configurations():
-    # await db_actions.connection()
     configurations = await TG_Configuration.all().values("tg_chat_link", "project_name")
-    # await db_actions.close_connections()
     return configurations
