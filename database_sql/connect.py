@@ -116,7 +116,6 @@ class TortoiseDBActions(TortoiseDBConnection):
             await self.connection()
             return await TG_Configuration.filter(tg_chat_link=chat_data.tg_chat_link,
                                                  project_name=chat_data.project_name).first()
-            # return chat_id
         except Exception as e:
             logger.error(f"Error while retrieving chat data SQL:\n {e}")
             return None
