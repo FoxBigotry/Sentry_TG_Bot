@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     CHAT_ID: str = Field(..., description="Telegram chat ID")
     SENTRY_AUTH_TOKEN: str = Field(..., description="Sentry token")
     ORGANIZATION_SLUG: str = Field(..., description="Sentry organization slug")
+    NGROK_AUTHTOKEN: str = Field(..., description=" Authtoken ngrok")
 
     # Database settings
     DB_USER: str = Field(..., description="Database username")
