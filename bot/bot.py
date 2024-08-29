@@ -14,12 +14,12 @@ dp = Dispatcher()
 TELEGRAM_URL = f'https://api.telegram.org/bot{settings.TG_KEY}/sendMessage'
 
 
-def send_telegram_message(text, topic_id=None):
+def send_telegram_message(chat_link, text, topic_id=None):
     """
     Function to send a message to Telegram
     """
     payload = {
-        'chat_id': settings.CHAT_ID,
+        'chat_id': chat_link,
         'text': text
     }
     if topic_id:
