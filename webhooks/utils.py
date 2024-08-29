@@ -63,6 +63,7 @@ async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActio
             tuple[str, Optional[str]]: A tuple containing the formatted error message and the ID of the
                                        created or existing Telegram topic.
     """
+
     chat_id_db = await db_actions.get_chat_id_project(payload.project_name)
 
     if chat_id_db:

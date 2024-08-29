@@ -15,6 +15,7 @@ logger = get_logger()
 # Initializations
 app = FastAPI()
 
+
 # Routes
 app.include_router(webhooks_router)
 app.include_router(endpoints_router)
