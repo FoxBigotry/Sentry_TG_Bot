@@ -2,11 +2,11 @@ import requests
 import datetime
 from pydantic import BaseModel
 from typing import Optional, Dict, Any
-from database.models import ErrorModel
-from database.connect import MongoDBActions
 from settings import settings
 from bot.bot import create_topic_f
 from logs.logger import get_logger
+from database_sql.models import SQLErrorModel
+from database_sql.connect import TortoiseDBActions
 
 logger = get_logger()
 
@@ -36,7 +36,7 @@ class SentryPayload(BaseModel):
         return self.event.get('event_id', 'not received')
 
 
-async def process_error_data(payload: SentryPayload, mongo_actions: MongoDBActions) -> tuple[str, Optional[str]]:
+async def process_error_data(payload: SentryPayload, db_actions: TortoiseDBActions) -> tuple[str, Optional[str]]:
     """
         Processes the error data received from a Sentry webhook.
 
@@ -47,42 +47,38 @@ async def process_error_data(payload: SentryPayload, mongo_actions: MongoDBActio
 
         Args:
             payload (SentryPayload): The payload object containing the error data from Sentry.
-            mongo_actions (MongoDBActions): An instance of MongoDBActions used for database operations.
+            db_actions (TortoiseDBActions): An instance of TortoiseDBActions used for database operations.
 
         Returns:
             tuple[str, Optional[str]]: A tuple containing the formatted error message and the ID of the
                                        created or existing Telegram topic.
     """
-    id_error = payload.id
-    url_error = payload.url
-    project_name_error = payload.project_name
-    type_error = payload.type_error
-    value_error = payload.value_error
-    event_id_error = payload.event_id_error
+    id_error = int(payload.id)
 
-    error = await mongo_actions.get_error(id_error)
+    error = await db_actions.get_error(id_error)
+
     if error:
-        topic_id = error.get('topic_id')
+        topic_id = error.topic_id
     else:
-        topic_id = await create_topic_f(settings.CHAT_ID, id_error, type_error)
+        topic_id = await create_topic_f(settings.CHAT_ID, str(id_error), payload.type_error)
 
-    error_data = ErrorModel(
+    error_data_sql = SQLErrorModel(
         error_id=id_error,
-        project_name=project_name_error,
-        type_error=type_error,
-        value_error=value_error,
-        url_error=url_error,
-        event_id=event_id_error,
-        datetime=str(datetime.datetime.now()),
-        topic_id=str(topic_id)
+        project_name=payload.project_name,
+        type_error=payload.type_error,
+        value_error=payload.value_error,
+        url_error=payload.url,
+        event_id=payload.event_id_error,
+        datetime=datetime.datetime.now(),
+        topic_id=topic_id
     )
 
-    await mongo_actions.save_error_data(error_data)
+    await db_actions.save_error_data(error_data_sql)
 
     full_message = (f"Error in Sentry!!\n"
-                    f"Project: {project_name_error}\n"
-                    f"Error: {type_error}: {value_error}\n"
-                    f"{url_error}")
+                    f"Project: {payload.project_name}\n"
+                    f"Error: {payload.type_error}: {payload.value_error}\n"
+                    f"{payload.url}")
 
     return full_message, topic_id
 
