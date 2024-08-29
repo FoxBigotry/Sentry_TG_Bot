@@ -13,6 +13,7 @@ class Settings(BaseSettings):
 
     TG_KEY: str = Field(..., description="Telegram bot token")
     CHAT_ID: str = Field(..., description="Telegram chat ID")
+    CHAT_LINK: str = Field(..., description="Telegram chat link")
     SENTRY_AUTH_TOKEN: str = Field(..., description="Sentry token")
     ORGANIZATION_SLUG: str = Field(..., description="Sentry organization slug")
     NGROK_AUTHTOKEN: str = Field(..., description=" Authtoken ngrok")

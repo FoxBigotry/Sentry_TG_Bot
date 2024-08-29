@@ -1,6 +1,6 @@
 from tortoise import Tortoise
 from typing import Optional
-from database_sql.models import SQLErrorModel
+from database_sql.models import SQLErrorModel, TG_Configuration
 from settings import settings
 from logs.logger import get_logger
 
@@ -79,16 +79,46 @@ class TortoiseDBActions(TortoiseDBConnection):
         finally:
             await self.close_connections()
 
-    async def get_error(self, error_id: int) -> Optional[SQLErrorModel]:
+    async def get_error(self, error_id: int, chat_id: int) -> Optional[SQLErrorModel]:
         """
         Retrieves an error from the collection by its identifier.
         """
         try:
             await self.connection()
-            error_data = await SQLErrorModel.filter(error_id=error_id).first()
+            error_data = await SQLErrorModel.filter(error_id=error_id, chat_id=chat_id).first()
             return error_data
         except Exception as e:
             logger.error(f"Error while retrieving data SQL:\n {e}")
+            return None
+        finally:
+            await self.close_connections()
+
+    async def save_chat_configuration(self, chat_data: TG_Configuration) -> Optional[int]:
+        """
+        Saves the chat configuration to the database.
+        """
+        try:
+            await self.connection()
+            chat_configuration = await TG_Configuration.create(tg_chat_id=chat_data.tg_chat_id,
+                                                               tg_chat_link=chat_data.tg_chat_link)
+            logger.info(f"Added:\n{chat_configuration}")
+            return chat_configuration.chat_id
+        except Exception as e:
+            logger.error(f"Error while saving chat_data SQL:\n {e}")
+            return None
+        finally:
+            await self.close_connections()
+
+    async def get_chat_id(self, chat_link: str) -> Optional[TG_Configuration]:
+        """
+        Retrieves the chat configuration from the database by chat link.
+        """
+        try:
+            await self.connection()
+            chat_id = await TG_Configuration.filter(tg_chat_link=chat_link).first()
+            return chat_id
+        except Exception as e:
+            logger.error(f"Error while retrieving chat data SQL:\n {e}")
             return None
         finally:
             await self.close_connections()

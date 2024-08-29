@@ -11,3 +11,10 @@ class SQLErrorModel(models.Model):
     event_id = fields.CharField(max_length=255)
     datetime = fields.DatetimeField(max_length=255)
     topic_id = fields.IntField()
+    chat_id = fields.IntField()
+
+
+class TG_Configuration(models.Model):
+    chat_id = fields.IntField(pk=True)
+    tg_chat_id = fields.BigIntField()
+    tg_chat_link = fields.CharField(max_length=255)
